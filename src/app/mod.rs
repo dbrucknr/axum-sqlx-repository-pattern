@@ -1,3 +1,7 @@
+pub mod devices;
+
+use crate::app::devices::{Device, routes::DeviceRoutes};
+
 use axum::{Extension, Router};
 use sqlx::SqlitePool;
 
@@ -13,7 +17,8 @@ impl NetFx {
     }
 
     pub fn api(self) -> Router {
-        self.router.nest("/api", Router::new())
+        self.router
+            .nest("/api", Router::new().nest("/devices", Device::routes()))
     }
 }
 
