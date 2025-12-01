@@ -1,13 +1,19 @@
-use axum::Router;
+use axum::{Extension, Router};
+use sqlx::SqlitePool;
 
-pub struct App {
+pub struct NetFx {
     pub router: Router,
 }
-impl App {
-    pub async fn new() -> Self {
+impl NetFx {
+    pub fn new(pool: SqlitePool) -> Self {
         Self {
-            router: Router::new(),
+            // Base Router
+            router: Router::new().layer(Extension(pool)),
         }
+    }
+
+    pub fn api(self) -> Router {
+        self.router.nest("/api", Router::new())
     }
 }
 
