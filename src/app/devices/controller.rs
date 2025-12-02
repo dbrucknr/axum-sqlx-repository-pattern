@@ -73,7 +73,7 @@ impl DeviceController for DeviceModule {
     ) -> Result<Json<ListDevicesResponse>, DeviceControllerError> {
         // TODO: Convert to a Result<Json<ListDevicesResponse>, Error> and begin to map Service layer errors into Controller layer errors
         let devices = service.get_all_devices().await?;
-        Ok(Json(ListDevicesResponse { devices }))
+        Ok(Json(ListDevicesResponse::new(devices)))
     }
 
     async fn create(
@@ -82,9 +82,9 @@ impl DeviceController for DeviceModule {
     ) -> Result<Json<CreateDeviceResponse>, DeviceControllerError> {
         let device = service.create_device(payload).await?;
 
-        Ok(Json(CreateDeviceResponse {
+        Ok(Json(CreateDeviceResponse::new(
             device,
-            message: "Device created successfully".to_string(),
-        }))
+            "Device created successfully".to_string(),
+        )))
     }
 }

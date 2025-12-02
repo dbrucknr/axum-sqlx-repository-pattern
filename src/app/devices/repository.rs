@@ -22,7 +22,6 @@ impl DeviceRepository {
 
 impl DeviceRepositoryTrait for DeviceRepository {
     async fn query_devices(&self) -> Result<Vec<Device>, SqlxError> {
-        // Use the pool to query the database here...
         let devices = sqlx::query_as!(Device, "SELECT id, serial_number FROM devices")
             .fetch_all(&self.pool)
             .await?;

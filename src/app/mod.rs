@@ -1,6 +1,8 @@
 pub mod devices;
+pub mod middleware;
 
-use crate::app::devices::DeviceModule;
+use devices::DeviceModule;
+use middleware::tracer::trace_request_response_cycle;
 
 use axum::Router;
 use sqlx::SqlitePool;
@@ -21,6 +23,7 @@ impl NetFx {
     pub fn api(self) -> Router {
         self.router
             .nest("/api", Router::new().nest("/devices", self.devices.api()))
+            .route_layer(trace_request_response_cycle())
     }
 }
 

@@ -17,11 +17,21 @@ impl ApiErrorResponse {
 pub struct ListDevicesResponse {
     pub devices: Vec<Device>,
 }
+impl ListDevicesResponse {
+    pub fn new(devices: Vec<Device>) -> Self {
+        Self { devices }
+    }
+}
 
 #[derive(Serialize)]
 pub struct CreateDeviceResponse {
     pub device: Device,
     pub message: String,
+}
+impl CreateDeviceResponse {
+    pub fn new(device: Device, message: String) -> Self {
+        Self { device, message }
+    }
 }
 
 #[derive(Deserialize)]

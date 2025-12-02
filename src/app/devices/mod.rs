@@ -6,6 +6,7 @@ use sqlx::SqlitePool;
 use std::sync::Arc;
 
 pub mod controller;
+pub mod errors;
 pub mod model;
 pub mod repository;
 pub mod schemas;
@@ -14,9 +15,6 @@ pub mod service;
 use crate::app::devices::controller::DeviceController;
 use crate::app::devices::repository::DeviceRepository;
 use crate::app::devices::service::DeviceService;
-
-// TODO: Add Schemas for request / response serialization + deserialization
-// use serde::{Deserialize, Serialize};
 
 pub struct DeviceModule {
     service: DeviceService,
