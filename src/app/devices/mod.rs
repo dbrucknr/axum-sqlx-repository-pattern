@@ -5,6 +5,7 @@ use std::sync::Arc;
 pub mod controller;
 pub mod model;
 pub mod repository;
+pub mod schemas;
 pub mod service;
 
 use crate::app::devices::controller::DeviceControllers;

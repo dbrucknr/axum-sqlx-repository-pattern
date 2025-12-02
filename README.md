@@ -9,3 +9,4 @@
 ## Steps
 1. `cargo install sqlx-cli`
 2. `sqlx db create`
+3. `sqlx migrate add -r create_devices_table`
