@@ -7,6 +7,7 @@ use dotenvy::dotenv;
 use sqlx::sqlite::SqlitePool;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
+use tracing::info;
 
 use app::NetFx;
 use logs::logger;
@@ -20,12 +21,13 @@ async fn main() -> errors::Returns<()> {
     let pool = SqlitePool::connect(&url).await?;
     sqlx::migrate!().run(&pool).await?;
 
-    let app = NetFx::new(pool);
+    let netfx = NetFx::new(pool);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
     let listener = TcpListener::bind(addr).await?;
+    info!("Listening on: http://{}", addr);
 
-    serve(listener, app.api()).await?;
+    serve(listener, netfx.api()).await?;
 
     Ok(())
 }

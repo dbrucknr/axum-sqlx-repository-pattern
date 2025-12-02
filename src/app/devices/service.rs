@@ -1,31 +1,9 @@
-use sqlx::Error as SqlxError;
-
 use crate::app::devices::{
+    errors::DeviceServiceError,
     model::Device,
     repository::{DeviceRepository, DeviceRepositoryTrait},
     schemas::CreateDeviceRequestBody,
 };
-
-// Catch Errors from the Repository Layer and Map them into Service Errors
-pub enum DeviceServiceError {
-    RecordNotFound,
-    ConnectionError,
-    DatabaseError(sqlx::Error),
-}
-impl From<SqlxError> for DeviceServiceError {
-    fn from(error: SqlxError) -> Self {
-        match error {
-            // No Row Found
-            SqlxError::RowNotFound => DeviceServiceError::RecordNotFound,
-            // Connection Issues
-            SqlxError::PoolTimedOut | SqlxError::PoolClosed | SqlxError::Io(_) => {
-                DeviceServiceError::ConnectionError
-            }
-            // Database Constraints + SQL Syntax Errors
-            _ => DeviceServiceError::DatabaseError(error),
-        }
-    }
-}
 
 pub trait DeviceServiceTrait {
     fn get_all_devices(&self) -> impl Future<Output = Result<Vec<Device>, DeviceServiceError>>;
@@ -35,6 +13,7 @@ pub trait DeviceServiceTrait {
     ) -> impl Future<Output = Result<Device, DeviceServiceError>>;
 }
 
+#[derive(Debug)]
 pub struct DeviceService {
     repository: DeviceRepository,
 }

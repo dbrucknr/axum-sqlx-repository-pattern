@@ -34,7 +34,7 @@ impl CreateDeviceResponse {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct CreateDeviceRequestBody {
     pub serial_number: String,
 }

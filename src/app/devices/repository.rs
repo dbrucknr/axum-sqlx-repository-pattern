@@ -10,6 +10,7 @@ pub trait DeviceRepositoryTrait {
     ) -> impl Future<Output = Result<Device, SqlxError>>;
 }
 
+#[derive(Debug)]
 pub struct DeviceRepository {
     pool: SqlitePool,
 }
