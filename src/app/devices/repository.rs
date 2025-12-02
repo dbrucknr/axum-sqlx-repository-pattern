@@ -17,8 +17,8 @@ impl DeviceRepository {
 }
 
 impl DeviceRepositoryTrait for DeviceRepository {
-    // Use self.pool...
     async fn query_devices(&self) -> Vec<Device> {
+        // Use the pool to query the database here...
         vec![Device::new(1, "1234567890"), Device::new(2, "0987654321")]
     }
 }

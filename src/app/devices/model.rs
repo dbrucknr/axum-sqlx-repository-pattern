@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Device {
-    id: i32,
-    serial_number: String,
+    pub id: i32,
+    pub serial_number: String,
 }
 
 impl Device {

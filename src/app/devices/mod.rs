@@ -5,21 +5,23 @@ use std::sync::Arc;
 pub mod controller;
 pub mod model;
 pub mod repository;
-pub mod routes;
 pub mod service;
 
 use crate::app::devices::controller::DeviceControllers;
 use crate::app::devices::repository::DeviceRepository;
 use crate::app::devices::service::DeviceService;
 
+// TODO: Add Schemas for request / response serialization + deserialization
+// use serde::{Deserialize, Serialize};
+
 pub struct DeviceModule {
-    service: DeviceService, // Attach as an extension to the router
+    service: DeviceService,
     router: Router,
 }
 impl DeviceModule {
     pub fn new(pool: &SqlitePool) -> Self {
-        // Add a repository (with a cloned sqlx pool) as a owned instance to the service
-        let repository = DeviceRepository::new(&pool.clone());
+        // Build Module Dependencies
+        let repository = DeviceRepository::new(&pool); // NOTE: I may need to clone the pool at this layer
         let service = DeviceService::new(repository);
 
         Self {

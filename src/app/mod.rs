@@ -1,6 +1,6 @@
 pub mod devices;
 
-use crate::app::devices::{DeviceModule, routes::DeviceRoutes};
+use crate::app::devices::DeviceModule;
 
 use axum::Router;
 use sqlx::SqlitePool;

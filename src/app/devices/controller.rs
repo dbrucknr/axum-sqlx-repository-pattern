@@ -1,7 +1,8 @@
-use super::DeviceModule;
-use crate::app::devices::service::{DeviceService, DeviceServiceTrait};
 use axum::Extension;
 use std::sync::Arc;
+
+use super::DeviceModule;
+use crate::app::devices::service::{DeviceService, DeviceServiceTrait};
 
 pub trait DeviceControllers {
     fn list(service: Extension<Arc<DeviceService>>) -> impl Future<Output = String>;

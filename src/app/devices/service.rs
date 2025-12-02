@@ -1,5 +1,3 @@
-use sqlx::SqlitePool;
-
 use crate::app::devices::{
     model::Device,
     repository::{DeviceRepository, DeviceRepositoryTrait},
