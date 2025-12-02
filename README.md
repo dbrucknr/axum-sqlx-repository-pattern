@@ -10,3 +10,13 @@
 1. `cargo install sqlx-cli`
 2. `sqlx db create`
 3. `sqlx migrate add -r create_devices_table`
+
+I used a database viewer to add data to the devices table.
+```sql
+INSERT INTO devices (
+	serial_number
+)
+VALUES (
+	"1234567890"
+);
+```

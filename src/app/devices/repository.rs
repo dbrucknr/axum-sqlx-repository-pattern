@@ -19,6 +19,13 @@ impl DeviceRepository {
 impl DeviceRepositoryTrait for DeviceRepository {
     async fn query_devices(&self) -> Vec<Device> {
         // Use the pool to query the database here...
-        Vec::from([Device::new(1, "1234567890"), Device::new(2, "0987654321")])
+        if let Ok(result) = sqlx::query_as!(Device, "SELECT id, serial_number FROM devices")
+            .fetch_all(&self.pool)
+            .await
+        {
+            result
+        } else {
+            Vec::new()
+        }
     }
 }
