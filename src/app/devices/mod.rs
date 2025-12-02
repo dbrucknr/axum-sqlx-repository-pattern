@@ -1,4 +1,7 @@
-use axum::{Extension, Router, routing::get};
+use axum::{
+    Extension, Router,
+    routing::{get, post},
+};
 use sqlx::SqlitePool;
 use std::sync::Arc;
 
@@ -8,7 +11,7 @@ pub mod repository;
 pub mod schemas;
 pub mod service;
 
-use crate::app::devices::controller::DeviceControllers;
+use crate::app::devices::controller::DeviceController;
 use crate::app::devices::repository::DeviceRepository;
 use crate::app::devices::service::DeviceService;
 
@@ -33,6 +36,7 @@ impl DeviceModule {
     pub fn api(self) -> Router {
         self.router
             .route("/", get(Self::list))
+            .route("/", post(Self::create))
             .layer(Extension(Arc::new(self.service)))
     }
 }
