@@ -1,14 +1,14 @@
 use axum::{Router, routing::get};
 
-use super::Device;
+use super::DeviceModule;
 use crate::app::devices::controller::DeviceControllers;
 
 pub trait DeviceRoutes {
     fn routes() -> Router;
 }
 
-impl DeviceRoutes for Device {
+impl DeviceRoutes for DeviceModule {
     fn routes() -> Router {
-        Router::new().route("/", get(Device::list))
+        Router::new().route("/", get(DeviceModule::list))
     }
 }
