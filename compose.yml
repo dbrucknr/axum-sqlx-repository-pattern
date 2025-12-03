@@ -1,5 +1,6 @@
 volumes:
   cargo-target:
+  pgdata:
 
 services:
   # Development Target: docker compose --profile dev up --build
@@ -8,6 +9,8 @@ services:
     build:
       context: .
       target: dev
+    depends_on:
+      - migrate
     volumes:
       - ./:/app
       - cargo-target:/app/target
@@ -19,5 +22,41 @@ services:
     build:
       context: .
       target: prod
+    depends_on:
+      app-postgres:
+        condition: service_healthy
     ports:
       - "8000:8000"
+
+  # Migration service (runs SQLx migrations after DB is ready)
+  migrate:
+    build:
+      context: .
+      target: dev
+    depends_on:
+      app-postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    command: cargo sqlx migrate run
+
+  # Database
+  app-postgres:
+    image: postgres:18.1
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432" # expose host port only if you want to access locally
+    expose:
+      - "5432"
+    healthcheck:
+      test: pg_isready -U postgres
+      start_period: 1s
+      interval: 5s
+      timeout: 1s
+      retries: 5

@@ -4,7 +4,8 @@ pub mod logs;
 
 use axum::serve;
 use dotenvy::dotenv;
-use sqlx::sqlite::SqlitePool;
+
+use sqlx::postgres::PgPool;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing::info;
@@ -18,8 +19,10 @@ async fn main() -> errors::Returns<()> {
     logger();
 
     let url = std::env::var("DATABASE_URL")?;
-    let pool = SqlitePool::connect(&url).await?;
+    let pool = PgPool::connect(&url).await?;
+    info!("Database connected");
     sqlx::migrate!().run(&pool).await?;
+    info!("Database migrations applied");
 
     let netfx = NetFx::new(pool);
 

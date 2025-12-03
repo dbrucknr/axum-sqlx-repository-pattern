@@ -2,7 +2,8 @@ use axum::{
     Extension, Router,
     routing::{get, post},
 };
-use sqlx::SqlitePool;
+
+use sqlx::postgres::PgPool;
 use std::sync::Arc;
 
 pub mod controller;
@@ -12,16 +13,16 @@ pub mod repository;
 pub mod schemas;
 pub mod service;
 
-use crate::app::devices::controller::DeviceController;
-use crate::app::devices::repository::DeviceRepository;
-use crate::app::devices::service::DeviceService;
+use controller::DeviceController;
+use repository::DeviceRepository;
+use service::DeviceService;
 
 pub struct DeviceModule {
     service: DeviceService,
     router: Router,
 }
 impl DeviceModule {
-    pub fn new(pool: &SqlitePool) -> Self {
+    pub fn new(pool: &PgPool) -> Self {
         // Build Module Dependencies
         let repository = DeviceRepository::new(&pool); // NOTE: I may need to clone the pool at this layer
         let service = DeviceService::new(repository);

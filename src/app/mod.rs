@@ -5,17 +5,19 @@ use devices::DeviceModule;
 use middleware::tracer::trace_request_response_cycle;
 
 use axum::Router;
-use sqlx::SqlitePool;
+
+use sqlx::postgres::PgPool;
 
 pub struct NetFx {
     devices: DeviceModule,
     pub router: Router,
 }
 impl NetFx {
-    pub fn new(pool: SqlitePool) -> Self {
+    pub fn new(pool: PgPool) -> Self {
         Self {
             // Base Router
             router: Router::new(),
+            // Pass a memory reference of the pool to the DeviceModule
             devices: DeviceModule::new(&pool),
         }
     }

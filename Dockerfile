@@ -9,14 +9,24 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev ca-certificates
 COPY Cargo.toml Cargo.lock ./
 # Copy the source code
 COPY src ./src
+COPY migrations ./migrations
+COPY .sqlx ./.sqlx
 
 # -------------------------------------
 # Development Target
 # -------------------------------------
 FROM base AS dev
-# Install watchexec
-RUN cargo install watchexec-cli
-# Run Watchexec
+
+# Copy everything
+COPY . .
+
+# Install PostgreSQL client and watchexec
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    cargo install sqlx-cli --no-default-features --features postgres && \
+    cargo install watchexec-cli
+
+# Run Watchexec (This may be overwritten in compose.yml)
 CMD ["watchexec", "--restart", "--watch", "src", "--exts", "rs", "cargo", "run"]
 
 # -------------------------------------

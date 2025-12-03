@@ -2,15 +2,41 @@
 
 ## Running via Docker + Docker Compose
 
-docker compose --profile dev ps
-docker compose --profile dev logs -f app-dev
+Notable commands:
+- docker compose --profile dev ps
+- docker compose --profile dev logs -f app-dev
+- docker compose exec app-dev bash
+  - cargo sqlx migrate info
+- docker compose exec -u postgres -it postgres psql -U postgres -h postgres -p 5432 -d postgres
+  - /dt
 
 There are 2 targets (dev and prod)
 To run a dev context: 
-docker compose --profile dev up -d
-docker compose --profile dev down
+- `docker compose --profile dev up -d --build` or `docker compose --profile dev up --build` (For logs)
+- `docker compose --profile dev down`
 
-To run a prod context: docker compose --profile prod up -d
+To run a prod context: 
+-`docker compose --profile prod up -d`
+
+
+I wonder if docker could help with testing contexts?:
+```yaml
+  # Test Target: docker compose --profile test up --build -d
+  app-test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test
+    ports:
+      - "8000:8000"
+```
+
+I switched from SQLite to PostgreSQL
+- I needed to update the repository to use PgPool instead of SqlitePool - I changed all the references 
+- I think I'll need to update the SQL dialects in the /migrations to be compatible with PostgreSQL
+- I'm not sure yet, but I suspect I may need to change the Device struct in models.rs
+
+ psql -U postgres -h hostname -p port_number -d database_name
 
 - `cargo run`
 

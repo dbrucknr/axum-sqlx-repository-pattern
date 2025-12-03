@@ -1,4 +1,4 @@
-use sqlx::{Error as SqlxError, SqlitePool};
+use sqlx::{Error as SqlxError, PgPool};
 
 use crate::app::devices::{model::Device, schemas::CreateDeviceRequestBody};
 
@@ -12,11 +12,11 @@ pub trait DeviceRepositoryTrait {
 
 #[derive(Debug)]
 pub struct DeviceRepository {
-    pool: SqlitePool,
+    pool: PgPool,
 }
 
 impl DeviceRepository {
-    pub fn new(pool: &SqlitePool) -> Self {
+    pub fn new(pool: &PgPool) -> Self {
         Self { pool: pool.clone() }
     }
 }
@@ -33,7 +33,7 @@ impl DeviceRepositoryTrait for DeviceRepository {
     async fn create_device(&self, payload: CreateDeviceRequestBody) -> Result<Device, SqlxError> {
         let created_device = sqlx::query_as!(
             Device,
-            "INSERT INTO devices (serial_number) VALUES (?) RETURNING id, serial_number",
+            "INSERT INTO devices (serial_number) VALUES ($1) RETURNING id, serial_number",
             payload.serial_number
         )
         .fetch_one(&self.pool)
