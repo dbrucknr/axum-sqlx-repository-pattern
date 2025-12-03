@@ -1,5 +1,17 @@
 # axum-sqlx-repository-pattern
 
+## Running via Docker + Docker Compose
+
+docker compose --profile dev ps
+docker compose --profile dev logs -f app-dev
+
+There are 2 targets (dev and prod)
+To run a dev context: 
+docker compose --profile dev up -d
+docker compose --profile dev down
+
+To run a prod context: docker compose --profile prod up -d
+
 - `cargo run`
 
 - `cargo build --release`

@@ -1,0 +1,23 @@
+volumes:
+  cargo-target:
+
+services:
+  # Development Target: docker compose --profile dev up --build
+  app-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: dev
+    volumes:
+      - ./:/app
+      - cargo-target:/app/target
+    ports:
+      - "8000:8000"
+  # Production Target: docker compose --profile prod up --build -d
+  app-prod:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: prod
+    ports:
+      - "8000:8000"
