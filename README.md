@@ -31,13 +31,28 @@ I wonder if docker could help with testing contexts?:
       - "8000:8000"
 ```
 
-I switched from SQLite to PostgreSQL
+### I switched from SQLite to PostgreSQL
 - I needed to update the repository to use PgPool instead of SqlitePool - I changed all the references 
 - I think I'll need to update the SQL dialects in the /migrations to be compatible with PostgreSQL
 - I'm not sure yet, but I suspect I may need to change the Device struct in models.rs
 
  psql -U postgres -h hostname -p port_number -d database_name
-
+ 
+ If you see: `error communicating with database: failed to lookup address information: Name or service not known (rust-analyzer macro-error)` by the sqlx_queries, this can be caused by the macros trying to connect to a database with a docker host name (app-database)
+ 
+ You can run these commands to help keep your IDE synchronized:
+ - Make sure the services are running
+ 
+ ```bash
+ export DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+ cargo sqlx prepare
+ git add .sqlx && git commit -m "Add sqlx offline cache"
+ ```
+ 
+ Then set SQLX_OFFLINE=true (in .env) for your editor/CI/runtime so sqlx macros use the cache.
+ I restarted the IDE and then made sure that the .sqlx/ directory was copied in the Dockerfile.
+ I booted the services up using the dev target, and then clicked on the main.rs file to begin having rust-analyzer index the project. Its designed to respect the SQLX_OFFLINE environment variable, which appeared to fix the IDE red lines and error messages. This is nice because it keeps the IDE synchronized with the Docker contexts.
+ 
 - `cargo run`
 
 - `cargo build --release`
