@@ -4,7 +4,7 @@ pub mod middleware;
 
 use authentication::AuthenticationModule;
 use devices::DeviceModule;
-use middleware::tracer::trace_request_response_cycle;
+use middleware::{compression::compress_responses, tracer::trace_request_response_cycle};
 
 use axum::{
     Json, Router,
@@ -63,6 +63,7 @@ impl NetFx {
                     .nest("/auth", self.authentication.api()),
             )
             .layer(trace_request_response_cycle())
+            .layer(compress_responses())
     }
 }
 
