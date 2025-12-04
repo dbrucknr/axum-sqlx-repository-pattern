@@ -6,9 +6,36 @@ use authentication::AuthenticationModule;
 use devices::DeviceModule;
 use middleware::tracer::trace_request_response_cycle;
 
-use axum::Router;
-
+use axum::{
+    Json, Router,
+    http::{StatusCode, Uri},
+};
+use serde::Serialize;
 use sqlx::postgres::PgPool;
+use tracing::instrument;
+
+// Consider relocating the fallback context
+#[derive(Serialize)]
+struct NotFoundResponse {
+    message: String,
+    path: String,
+}
+impl NotFoundResponse {
+    fn new(message: &str, path: Uri) -> Self {
+        Self {
+            message: message.to_string(),
+            path: path.to_string(),
+        }
+    }
+}
+
+#[instrument]
+async fn fallback(uri: Uri) -> (StatusCode, Json<NotFoundResponse>) {
+    (
+        StatusCode::NOT_FOUND,
+        Json(NotFoundResponse::new("Not Found", uri)),
+    )
+}
 
 pub struct NetFx {
     devices: DeviceModule,
@@ -28,13 +55,14 @@ impl NetFx {
 
     pub fn api(self) -> Router {
         self.router
+            .fallback(fallback)
             .nest(
                 "/api",
                 Router::new()
                     .nest("/devices", self.devices.api())
                     .nest("/auth", self.authentication.api()),
             )
-            .route_layer(trace_request_response_cycle())
+            .layer(trace_request_response_cycle())
     }
 }
 

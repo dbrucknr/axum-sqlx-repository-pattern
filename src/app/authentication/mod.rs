@@ -18,7 +18,8 @@ impl AuthenticationModule {
     pub fn api(self) -> Router {
         self.router
             .route("/login", get(Self::login))
-            .route("/authenticate", get(Self::authenticate))
             .route("/logout", get(Self::logout))
+            .route("/authenticate", get(Self::authenticate))
+            .route("/refresh", get(Self::refresh))
     }
 }

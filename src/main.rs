@@ -5,8 +5,9 @@ pub mod logs;
 use axum::serve;
 use dotenvy::dotenv;
 
+use errors::Returns;
 use sqlx::postgres::PgPool;
-use std::net::SocketAddr;
+use std::{net::SocketAddr, process::ExitCode};
 use tokio::net::TcpListener;
 use tracing::info;
 
@@ -14,7 +15,7 @@ use app::NetFx;
 use logs::logger;
 
 #[tokio::main]
-async fn main() -> errors::Returns<()> {
+async fn main() -> Returns<ExitCode> {
     dotenv().ok();
     logger();
 
@@ -32,5 +33,5 @@ async fn main() -> errors::Returns<()> {
 
     serve(listener, netfx.api()).await?;
 
-    Ok(())
+    Ok(ExitCode::SUCCESS)
 }

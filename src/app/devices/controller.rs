@@ -1,6 +1,6 @@
 use axum::{Extension, Json};
 use std::sync::Arc;
-use tracing::instrument;
+use tracing::{info, instrument};
 
 use super::DeviceModule;
 use crate::app::devices::{
@@ -24,17 +24,19 @@ pub trait DeviceController {
         payload: Json<CreateDeviceRequestBody>,
     ) -> impl Future<Output = ControllerResponse<CreateDeviceResponse>>;
 }
+// https://docs.rs/tracing/0.1.40/tracing/attr.instrument.html
 
 impl DeviceController for DeviceModule {
-    #[instrument(level = "debug")]
+    #[instrument(name = "list_devices" level = "info")]
     async fn list(
         Extension(service): Extension<Arc<DeviceService>>,
     ) -> ControllerResponse<ListDevicesResponse> {
+        info!("Listing devices");
         let devices = service.get_all_devices().await?;
         Ok(Json(ListDevicesResponse::new(devices)))
     }
 
-    #[instrument(level = "debug", fields(payload = payload.serial_number))]
+    #[instrument(name = "create_device" level = "info", fields(payload = payload.serial_number))]
     async fn create(
         Extension(service): Extension<Arc<DeviceService>>,
         Json(payload): Json<CreateDeviceRequestBody>,

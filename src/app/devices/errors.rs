@@ -10,7 +10,7 @@ use tracing::{error, warn};
 pub enum DeviceServiceError {
     RecordNotFound,
     ConnectionError,
-    DatabaseError(sqlx::Error),
+    DatabaseError(SqlxError),
 }
 impl From<SqlxError> for DeviceServiceError {
     fn from(error: SqlxError) -> Self {
